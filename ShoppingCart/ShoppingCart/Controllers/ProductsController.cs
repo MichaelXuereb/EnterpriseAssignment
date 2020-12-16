@@ -31,19 +31,20 @@ namespace Presentation.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             var catList = _categoriesService.GetCategories();
 
             ViewBag.Categories = catList;
 
-            return View(); //model => ProductViewModel
+            return View();
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public IActionResult Create(ProductViewModel data, IFormFile file)
         {
-            //validation
             try
             {  
                 _productsService.AddProduct(data);
@@ -52,13 +53,19 @@ namespace Presentation.Controllers
             }
             catch (Exception ex)
             {
-                //log errors
                 ViewData["warning"] = "Product was not added. Check your details";
             }
             var catList = _categoriesService.GetCategories();
             ViewBag.Categories = catList;
 
             return View();
+        }
+
+        public IActionResult Delete(Guid id)
+        {
+            _productsService.DeleteProduct(id);
+            TempData["feedback"] = "Product was deleted successfully"; //change wherever we are using ViewData to use TempData data
+            return RedirectToAction("Index");
         }
     }
 }

@@ -37,7 +37,8 @@
                 <select asp-for="Category.Id" class="form-control">
                     @foreach (var category in ViewBag.Categories)
                     {
-        <option value="@category.Id">@category.Name</option>}
+                        <option value="@category.Id">@category.Name</option>
+                        }
                 </select>
 
                 <span asp-validation-for="Category.Id" class="text-danger"></span>
