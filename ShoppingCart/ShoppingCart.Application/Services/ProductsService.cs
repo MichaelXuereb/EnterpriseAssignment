@@ -27,6 +27,7 @@ namespace ShoppingCart.Application.Services
                            Price = p.Price,
                            Description = p.Description,
                            ImageUrl = p.ImageUrl,
+                           Quantity = p.Quantity,
                            Category = new CategoryViewModel() { Id = p.Category.Id, Name = p.Category.Name }
                        };
 
@@ -40,6 +41,7 @@ namespace ShoppingCart.Application.Services
             p.ImageUrl = data.ImageUrl;
             p.Name = data.Name;
             p.Price = data.Price;
+            p.Quantity = data.Quantity;
             p.CategoryId = data.Category.Id;
 
 
@@ -54,6 +56,7 @@ namespace ShoppingCart.Application.Services
             myViewModel.Description = productFromDb.Description;
             myViewModel.Id = productFromDb.Id;
             myViewModel.ImageUrl = productFromDb.ImageUrl;
+            myViewModel.Quantity = productFromDb.Quantity;
             myViewModel.Name = productFromDb.Name;
             myViewModel.Price = productFromDb.Price;
             myViewModel.Category = new CategoryViewModel();

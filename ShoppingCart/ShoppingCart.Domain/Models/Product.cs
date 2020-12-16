@@ -10,6 +10,7 @@ namespace ShoppingCart.Domain.Models
     {
         [Key]
         public Guid Id { get; set; }
+
         [Required]
         public string Name { get; set; }
         [Required]
@@ -18,6 +19,9 @@ namespace ShoppingCart.Domain.Models
         public string Description { get; set; }
         [Required]
         public string ImageUrl { get; set; }
+        [Required]
+        public int Quantity { get; set; }
+
         [Required]
         public virtual Category Category { get; set; }
         [ForeignKey("Category")]

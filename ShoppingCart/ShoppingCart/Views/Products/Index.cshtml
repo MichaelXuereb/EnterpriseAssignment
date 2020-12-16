@@ -1,29 +1,76 @@
-﻿@model IEnumerable<ShoppingCart.Application.ViewModels.ProductViewModel>
+﻿@model PageinatedList<ShoppingCart.Application.ViewModels.ProductViewModel>
 @{
     ViewData["Title"] = "Index";
 }
 
 <h1>Products</h1>
+<hr />
 
 <div class="container">
     <div class="row">
         @foreach (var product in Model)
         {
             <div class="col-4">
-                <div class="card mb-4 bg-dark text-white" style="width: 19rem;">
-                    <img class="card-img-top" src="@product.ImageUrl" alt="Card image cap" style="background-color: white;">
+                <div class="card mb-4 bg-dark text-white">
+                    <img class="cardimg" src="@product.ImageUrl" alt="Card image cap">
                     <div class="card-body">
-                        <h5 class="card-title" style="text-align: center">@product.Name</h5>
-                        <hr style="border-color: white" />
-                        <p class="card-text">@product.Description</p>
-                        <hr style="border-color: white" />
-                        <h4 style="text-align: center">€@product.Price</h4>
-                        <a href="#" class="btn btn-primary" style="border-radius: 13px;"><i class="fas fa-eye"></i> View Item</a>
-                        <a href="#" class="btn btn-success" style="border-radius: 13px"><i class="fas fa-shopping-cart"></i> Add To Cart</a>
-                        <a href="/Products/Delete?id=@product.Id" onclick="return window.confirm('Are you sure?')" class="btn btn-danger" style="border-radius: 13px">Delete</a>
+                        <h5 class="cardtext">@product.Name</h5>
+                        <hr class="line" />
+                        <p class="cardtext">@product.Description</p>
+                        <hr class="line" />
+                        <h4 class="cardtext">€@product.Price</h4>
+                        <a href="#" class="btn btn-primary"><i class="fas fa-eye"></i> View Item</a>
+                        <a href="#" class="btn btn-success"><i class="fas fa-shopping-cart"></i> Add To Cart</a>
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <a href="/Products/Delete?id=@product.Id" style="margin-left: 32%;" onclick="return window.confirm('Are you sure?')" class="btn btn-danger"><i class="fas fa-trash-alt"></i> Delete</a>
+                        }
                     </div>
                 </div>
             </div>
         }
-        </div>
+    </div>
+    <hr/>
+
+
+    @{
+        var prevDisabled = !Model.PreviousPage ? "disabled" : "";
+        var nextDisabled = !Model.NextPage ? "disabled" : "";
+    }
+
+    <a asp-action="Index" asp-route-pageNumber="@(Model.PageIndex - 1)" class="btn btn-default @prevDisabled">Previous</a>
+    <a asp-action="Index" asp-route-pageNumber="@(Model.PageIndex + 1)" class="btn btn-default @nextDisabled">Next</a>
+
+
 </div>
+
+<style>
+    .card {
+        width: 19rem;
+    }
+
+    .btn {
+        border-radius: 13px;
+        margin-top: 2%;
+    }
+
+    .line {
+        border-color: white;
+    }
+
+    .cardtext {
+        text-align: center;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+    }
+
+    .cardimg {
+        min-width: 300px;
+        max-width: 300px;
+        min-height: 300px;
+        max-height: 300px;
+    }
+</style>

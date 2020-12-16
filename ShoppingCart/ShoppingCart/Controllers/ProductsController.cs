@@ -9,7 +9,8 @@ using Microsoft.AspNetCore.Mvc;
 using ShoppingCart.Application.Interfaces;
 using ShoppingCart.Application.Services;
 using ShoppingCart.Application.ViewModels;
-
+using ShoppingCart.Domain.Models;
+using ShoppingCart.Models;
 
 namespace Presentation.Controllers
 {
@@ -23,12 +24,12 @@ namespace Presentation.Controllers
             _productsService = productsService;
             _categoriesService = categoriesService;
         }
-
+        /*
         public IActionResult Index()
         {
             var list = _productsService.GetProducts();
             return View(list);
-        }
+        }*/
 
         [HttpGet]
         [Authorize(Roles = "Admin")]
@@ -59,6 +60,12 @@ namespace Presentation.Controllers
             ViewBag.Categories = catList;
 
             return View();
+        }
+
+        public async Task<IActionResult> Index(int pageNumber = 1) {
+            var list = _productsService.GetProducts();
+
+            return View(await PageinatedList<ProductViewModel>.CreateAsync(list,pageNumber,6));
         }
 
         public IActionResult Delete(Guid id)
