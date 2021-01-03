@@ -12,6 +12,8 @@ namespace ShoppingCart.Application.Services
     public class MembersSerivce : IMembersService
     {
         private IMembersRepository _membersRepo;
+        //private IMapper _mapper;
+        
         public MembersSerivce(IMembersRepository memberRepo)
         {
             _membersRepo = memberRepo;
@@ -26,6 +28,10 @@ namespace ShoppingCart.Application.Services
                 LastName = m.LastName
             };
             _membersRepo.AddMember(newMember);
+        }
+
+        public Member GetMember(string email) {
+            return _membersRepo.GetMember(email);
         }
     }
 }

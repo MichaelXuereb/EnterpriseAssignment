@@ -1,13 +1,14 @@
 ﻿using ShoppingCart.Domain.Models;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace ShoppingCart.Domain.Interfaces
 {
-    public interface IMembersRepository
+    public interface ICartProdRepository
     {
-        void AddMember(Member m);
-        Member GetMember(string email);
+        void AddToCart(CartProd prod);
+        IQueryable<CartProd> GetCartProds();
     }
 }

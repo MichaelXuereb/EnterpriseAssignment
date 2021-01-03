@@ -24,10 +24,13 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Products" asp-action="index">View Product</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Products" asp-action="index" onclick="sessionStorage">View Product</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Products" asp-action="create">Add Product</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="ShoppingCart" asp-action="Index" asp-route-email="@User.Identity.Name">Cart</a>
                         </li>
                     </ul>
                 </div>

@@ -18,18 +18,19 @@ namespace Presentation.Controllers
     {
         private IProductsService _productsService;
         private ICategoriesService _categoriesService;
+        private ICartsService _cartsService;
+        private ICartProdsService _cartProdsService;
+        private IWebHostEnvironment _env;
+
         public ProductsController(IProductsService productsService,
-            ICategoriesService categoriesService)
+            ICategoriesService categoriesService, ICartsService cartsService, ICartProdsService cartProdsService, IWebHostEnvironment env)
         {
             _productsService = productsService;
             _categoriesService = categoriesService;
+            _cartsService = cartsService;
+            _cartProdsService = cartProdsService;
+            _env = env;
         }
-        /*
-        public IActionResult Index()
-        {
-            var list = _productsService.GetProducts();
-            return View(list);
-        }*/
 
         [HttpGet]
         [Authorize(Roles = "Admin")]
@@ -47,14 +48,26 @@ namespace Presentation.Controllers
         public IActionResult Create(ProductViewModel data, IFormFile file)
         {
             try
-            {  
+            {
+                if(file != null) {
+                    if(file.Length > 0) {
+                        string fileName = Guid.NewGuid() + System.IO.Path.GetExtension(file.FileName);
+                        string path = _env.WebRootPath + @"\Images\";
+
+                        using (var stream = System.IO.File.Create(path + fileName)) {
+                            file.CopyTo(stream);
+                        }
+
+                        data.ImageUrl = @"\Images\" + fileName;
+                    }
+                }
                 _productsService.AddProduct(data);
                 ViewData["feedback"] = "Product was added successfully";
                 ModelState.Clear();
             }
             catch (Exception ex)
             {
-                ViewData["warning"] = "Product was not added. Check your details";
+                ViewData["warning"] = "Product was not added. Check your details" + ex;
             }
             var catList = _categoriesService.GetCategories();
             ViewBag.Categories = catList;
@@ -63,7 +76,7 @@ namespace Presentation.Controllers
         }
 
         public async Task<IActionResult> Index(int pageNumber = 1) {
-            var list = _productsService.GetProducts();
+            var list = _productsService.GetProducts().Where(x =>x.Category.Name == "Computer");
 
             return View(await PageinatedList<ProductViewModel>.CreateAsync(list,pageNumber,6));
         }
@@ -74,5 +87,13 @@ namespace Presentation.Controllers
             TempData["feedback"] = "Product was deleted successfully"; //change wherever we are using ViewData to use TempData data
             return RedirectToAction("Index");
         }
+
+        public IActionResult AddToCart(Guid id, string email)
+        {
+            _cartProdsService.AddToCart(id,email);
+            TempData["feedback"] = "Added to Cart";
+            return RedirectToAction("Index");
+        }
+
     }
 }

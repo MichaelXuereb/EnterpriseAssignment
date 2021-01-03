@@ -8,24 +8,24 @@ using System.Text;
 
 namespace ShoppingCart.Data.Repositories
 {
-    public class MembersRepository : IMembersRepository
+    public class CartProdRepository : ICartProdRepository
     {
         private ShoppingCartDbContext _context;
-        public MembersRepository(ShoppingCartDbContext context)
+
+        public CartProdRepository(ShoppingCartDbContext context)
         {
             _context = context;
         }
-
-
-        public void AddMember(Member m)
+       
+        public void AddToCart(CartProd p)
         {
-            _context.Members.Add(m);
+            _context.CartProd.Add(p);
             _context.SaveChanges();
         }
 
-        public Member GetMember(string email)
+        public IQueryable<CartProd> GetCartProds()
         {
-            return _context.Members.SingleOrDefault(x => x.Email == email);
+            return _context.CartProd;
         }
     }
 }

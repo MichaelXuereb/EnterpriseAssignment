@@ -6,9 +6,9 @@ using System.Text;
 
 namespace ShoppingCart.Application.Interfaces
 {
-    public interface IMembersService
+    public interface ICartsService
     {
-        void AddMember(MemberViewModel m);
-        Member GetMember(string email);
+        void CreateCart(Cart c, string email);
+        CartViewModel GetCart(string email);
     }
 }

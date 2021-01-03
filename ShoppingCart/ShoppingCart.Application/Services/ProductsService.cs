@@ -12,9 +12,16 @@ namespace ShoppingCart.Application.Services
     public class ProductsService : IProductsService
     {
         private IProductsRepository _productRepo;
-        public ProductsService(IProductsRepository productRepo)
+        private ICartRepository _cartRepo;
+        private IMembersRepository _memberRepo;
+        private ICartProdRepository _orderDetRepo;
+
+        public ProductsService(IProductsRepository productRepo, ICartRepository cartRepo, IMembersRepository memberRepo, ICartProdRepository orderDetRepo)
         {
             _productRepo = productRepo;
+            _cartRepo = cartRepo;
+            _memberRepo = memberRepo;
+            _orderDetRepo = orderDetRepo;
         }
 
         public IQueryable<ProductViewModel> GetProducts()
@@ -72,6 +79,6 @@ namespace ShoppingCart.Application.Services
             {
                 _productRepo.DeleteProduct(id);
             }
-        }
+        }        
     }
 }
