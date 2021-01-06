@@ -23,6 +23,12 @@ namespace ShoppingCart.Data.Repositories
             _context.SaveChanges();
         }
 
+        public void DeleteCart(string email)
+        {
+            _context.Cart.Remove(GetCart(email));
+            _context.SaveChanges();
+        }
+
         public Cart GetCart(string email)
         {
             return _context.Cart.SingleOrDefault(x => x.Email == email);

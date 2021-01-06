@@ -2,26 +2,37 @@
 
 @{
     ViewData["Title"] = "Index";
+    double totalPrice = 0;
+    
 }
 
 <div class="container">
     <div class="row">
-        @foreach (var product in Model)
-        {
-            <div class="col-4">
-                <div class="card mb-4 bg-dark text-white">
-                    <img class="cardimg" src="@product.product.ImageUrl" alt="Card image cap">
-                    <div class="card-body">
-                        <h5 class="cardtext">@product.product.Name</h5>
-                        <hr class="line" />
-                        <p class="cardtext">@product.product.Description</p>
-                        <hr class="line" />
-                        <h4 class="cardtext">€@product.product.Price</h4>
-                        <a href="#" class="btn btn-primary"><i class="fas fa-eye"></i> View Item</a>
-                        
-                    </div>
-                </div>
-            </div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Product</th>
+                    <th scope="col">Quantity</th>
+                    <th scope="col">Price</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var product in Model)
+                {
+                    <tr>
+                        <td>@product.Product.Name</td>
+                        <td>@product.Product.Quantity</td>
+                        <td>€@product.Product.Price</td>
+                        <td><a href="/ShoppingCart/Delete?id=@product.Product.Id" style="margin-left: 32%;" onclick="return window.confirm('Are you sure?')" class="btn btn-danger"><i class="fas fa-trash-alt"></i> Delete</a></td>
+
+                    </tr>
+                    totalPrice += @product.Product.Price;
+                    <a href="/ShoppingCart/Checkout?email=@User.Identity.Name" class="btn btn-success"><i class="fas fa-shopping-cart"></i> Add To Order</a>
+                }
+            </tbody>
+        </table>
+        @{
+            <h3>Total: €@totalPrice</h3>
         }
     </div>
-    <hr />
+</div>

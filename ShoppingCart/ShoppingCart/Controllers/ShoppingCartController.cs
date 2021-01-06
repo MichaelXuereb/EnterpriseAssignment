@@ -9,12 +9,12 @@ namespace ShoppingCart.Controllers
 {
     public class ShoppingCartController : Controller
     {
-        private ICartsService _cartsService;
         private ICartProdsService _cartProdsService;
+        private IOrderDetailsService _orderDetService;
 
-        public ShoppingCartController(ICartsService cartsService, ICartProdsService cartProdsService)
+        public ShoppingCartController(IOrderDetailsService orderDetService, ICartProdsService cartProdsService)
         {
-            _cartsService = cartsService;
+            _orderDetService = orderDetService;
             _cartProdsService = cartProdsService;
         }
         public IActionResult Index(string email)
@@ -22,5 +22,20 @@ namespace ShoppingCart.Controllers
             var list = _cartProdsService.GetCartProds(email);
             return View(list);
         }
+
+        public IActionResult Delete(Guid id)
+        {
+            _cartProdsService.RemoveCartProduct(id);
+            TempData["feedback"] = "Product was deleted successfully";
+            return RedirectToAction("Index");
+        }
+
+        public IActionResult Checkout(string email)
+        {
+            _orderDetService.AddToOrder(email);
+            TempData["feedback"] = "Added to Order";
+            return RedirectToAction("Index", "Products");
+        }
+
     }
 }

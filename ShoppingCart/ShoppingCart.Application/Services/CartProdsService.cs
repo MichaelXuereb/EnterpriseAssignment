@@ -32,16 +32,36 @@ namespace ShoppingCart.Application.Services
         {
             if (_cartRepo.GetCart(_memberRepo.GetMember(email).Email) == null)
             {
-                Cart c = new Cart();
-                _cartService.CreateCart(c,email);
+                _cartService.CreateCart(email);
             }
 
-            CartProd scp = new CartProd();
-            scp.ShoppingCartFk = _cartRepo.GetCart(_memberRepo.GetMember(email).Email).Id;
-            scp.Quantity += 1;
-            scp.DateCreated = System.DateTime.Now;
-            scp.ProductFk = _productRepo.GetProduct(id).Id;
-            _cartProdRepo.AddToCart(scp);
+            if (_cartProdRepo.GetCartProduct(id) == null) {
+                CartProd scp = new CartProd();
+                scp.ShoppingCartFk = _cartRepo.GetCart(_memberRepo.GetMember(email).Email).Id;
+                scp.Quantity += 1;
+                scp.DateCreated = System.DateTime.Now;
+                scp.ProductFk = _productRepo.GetProduct(id).Id;
+                _cartProdRepo.AddToCart(scp);
+            }
+            else{
+                CartProd scp = _cartProdRepo.GetCartProduct(id);
+                scp.ShoppingCartFk = _cartRepo.GetCart(_memberRepo.GetMember(email).Email).Id;
+                int currentQuantity = scp.Quantity;
+                currentQuantity++;
+                scp.Quantity = currentQuantity;
+                scp.DateCreated = System.DateTime.Now;
+                scp.ProductFk = _productRepo.GetProduct(id).Id;
+                _cartProdRepo.UpdateCart(scp);
+                
+            }
+        }
+
+        public void RemoveCartProduct(Guid id)
+        {
+            if (_cartProdRepo.GetCartProduct(id) != null)
+            {
+                _cartProdRepo.RemoveCartProduct(id);
+            }
         }
 
         public IQueryable<CartProdViewModel> GetCartProds(string email)
@@ -52,15 +72,24 @@ namespace ShoppingCart.Application.Services
                        where p.ShoppingCartFk == cartDb.Id
                        select new CartProdViewModel()
                        {
-                           id = p.id,
-                           cart = new CartViewModel() { Id = p.ShoppingCartFk, DatePlaced = p.DateCreated, Email = cartDb.Email},
-                           product = new ProductViewModel() { Id = p.ProductFk, Name = p.Product.Name, Price = p.Product.Price, Description = p.Product.Description, ImageUrl = p.Product.ImageUrl, Quantity = p.Quantity},
+                           Id = p.id,
+                           Cart = new CartViewModel() { Id = p.ShoppingCartFk, DatePlaced = p.DateCreated, Email = cartDb.Email },
+                           Product = new ProductViewModel() { Id = p.ProductFk, Name = p.Product.Name, Price = p.Product.Price, Description = p.Product.Description, ImageUrl = p.Product.ImageUrl, Quantity = p.Quantity },
                            DateCreated = p.DateCreated,
                            Quantity = p.Quantity
-                    
+
                        };
+            
 
             return list;
+        }
+
+        public CartProdViewModel GetCartProduct(Guid id)
+        {         
+            CartProdViewModel cartProd = new CartProdViewModel();
+            var productFromDb = _cartProdRepo.GetCartProduct(id);
+            cartProd.Product.Quantity = productFromDb.Product.Quantity;
+            return cartProd;
         }
     }
 }

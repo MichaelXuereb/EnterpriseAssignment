@@ -17,6 +17,9 @@ namespace ShoppingCart.Data.Context
         public DbSet<Member> Members { get; set; }
         public DbSet<Cart> Cart { get; set; }
         public DbSet<CartProd> CartProd { get; set; }
+        public DbSet<Order> Order { get; set; }
+        public DbSet<OrderDetails> OrderDetails { get; set; }
+        public object Orders { get; internal set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

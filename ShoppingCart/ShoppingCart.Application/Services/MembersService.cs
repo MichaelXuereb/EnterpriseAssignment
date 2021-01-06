@@ -1,4 +1,5 @@
-﻿using ShoppingCart.Application.Interfaces;
+﻿using AutoMapper;
+using ShoppingCart.Application.Interfaces;
 using ShoppingCart.Application.ViewModels;
 using ShoppingCart.Domain.Interfaces;
 using ShoppingCart.Domain.Models;
@@ -12,22 +13,18 @@ namespace ShoppingCart.Application.Services
     public class MembersSerivce : IMembersService
     {
         private IMembersRepository _membersRepo;
-        //private IMapper _mapper;
+        private IMapper _mapper;
         
-        public MembersSerivce(IMembersRepository memberRepo)
+        public MembersSerivce(IMembersRepository memberRepo, IMapper mapper)
         {
             _membersRepo = memberRepo;
+            _mapper = mapper;
         }
 
-        public void AddMember(MemberViewModel m)
+        public void AddMember(MemberViewModel data)
         {
-            Member newMember = new Member()
-            {
-                Email = m.Email,
-                FirstName = m.FirstName,
-                LastName = m.LastName
-            };
-            _membersRepo.AddMember(newMember);
+            var m = _mapper.Map<Member>(data);
+            _membersRepo.AddMember(m);
         }
 
         public Member GetMember(string email) {

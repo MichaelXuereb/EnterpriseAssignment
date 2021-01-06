@@ -76,7 +76,7 @@ namespace Presentation.Controllers
         }
 
         public async Task<IActionResult> Index(int pageNumber = 1) {
-            var list = _productsService.GetProducts().Where(x =>x.Category.Name == "Computer");
+            var list = _productsService.GetProducts();
 
             return View(await PageinatedList<ProductViewModel>.CreateAsync(list,pageNumber,6));
         }

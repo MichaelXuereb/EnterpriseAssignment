@@ -10,5 +10,6 @@ namespace ShoppingCart.Domain.Interfaces
     {
         void CreateCart(Cart c);
         Cart GetCart(string email);
+        void DeleteCart(string email);
     }
 }

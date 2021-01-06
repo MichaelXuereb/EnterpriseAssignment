@@ -79,6 +79,6 @@ namespace ShoppingCart.Application.Services
             {
                 _productRepo.DeleteProduct(id);
             }
-        }        
+        }
     }
 }

@@ -27,5 +27,22 @@ namespace ShoppingCart.Data.Repositories
         {
             return _context.CartProd;
         }
+
+        public CartProd GetCartProduct(Guid id)
+        {
+            return _context.CartProd.SingleOrDefault(x => x.Product.Id == id);
+        }
+
+        public void RemoveCartProduct(Guid id)
+        {
+            _context.CartProd.Remove(GetCartProduct(id));
+            _context.SaveChanges();
+        }
+
+        public void UpdateCart(CartProd prod)
+        {
+            _context.CartProd.Update(prod);
+            _context.SaveChanges();
+        }
     }
 }
