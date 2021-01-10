@@ -22,7 +22,7 @@ namespace ShoppingCart.Data.Repositories
 
         public Order GetOrder(string email)
         {
-            return _context.Order.SingleOrDefault(x => x.Email == email);
+            return _context.Order.OrderByDescending(x => x.Email == email).Last();
         }
     }
 }

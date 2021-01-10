@@ -15,6 +15,8 @@ namespace ShoppingCart.Application.Interfaces
 
         void AddProduct(ProductViewModel data);
 
+        void UpdateProduct(Guid id);
+
         void DeleteProduct(Guid id);
     }
 }

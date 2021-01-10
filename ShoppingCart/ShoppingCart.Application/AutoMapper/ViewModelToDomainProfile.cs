@@ -13,8 +13,8 @@ namespace ShoppingCart.Application.AutoMapper
             CreateMap<ProductViewModel, Product>();
             CreateMap<CategoryViewModel, Category>();
             CreateMap<MemberViewModel, Member>();
-            CreateMap<CartViewModel, Member>();
-            CreateMap<CartProdViewModel, Member>();
+            CreateMap<CartViewModel, Cart>();
+            CreateMap<CartProdViewModel, CartProd>();
             CreateMap<OrderViewModel, Order>();
             CreateMap<OrderDetailsViewModel, OrderDetails>();
         }

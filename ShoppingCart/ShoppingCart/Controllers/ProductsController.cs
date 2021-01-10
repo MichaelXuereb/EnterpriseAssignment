@@ -18,16 +18,14 @@ namespace Presentation.Controllers
     {
         private IProductsService _productsService;
         private ICategoriesService _categoriesService;
-        private ICartsService _cartsService;
         private ICartProdsService _cartProdsService;
         private IWebHostEnvironment _env;
 
         public ProductsController(IProductsService productsService,
-            ICategoriesService categoriesService, ICartsService cartsService, ICartProdsService cartProdsService, IWebHostEnvironment env)
+            ICategoriesService categoriesService, ICartProdsService cartProdsService, IWebHostEnvironment env)
         {
             _productsService = productsService;
             _categoriesService = categoriesService;
-            _cartsService = cartsService;
             _cartProdsService = cartProdsService;
             _env = env;
         }
@@ -81,6 +79,14 @@ namespace Presentation.Controllers
             return View(await PageinatedList<ProductViewModel>.CreateAsync(list,pageNumber,6));
         }
 
+        public IActionResult Details(Guid id)
+        {
+            var myProduct = _productsService.GetProduct(id);
+
+            return View(myProduct);
+
+        }
+
         public IActionResult Delete(Guid id)
         {
             _productsService.DeleteProduct(id);
@@ -90,7 +96,7 @@ namespace Presentation.Controllers
 
         public IActionResult AddToCart(Guid id, string email)
         {
-            _cartProdsService.AddToCart(id,email);
+            _cartProdsService.CartOptions(id,email);
             TempData["feedback"] = "Added to Cart";
             return RedirectToAction("Index");
         }

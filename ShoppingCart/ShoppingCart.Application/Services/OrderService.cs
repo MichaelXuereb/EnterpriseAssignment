@@ -11,18 +11,13 @@ namespace ShoppingCart.Application.Services
 {
     public class OrderService : IOrderService
     {
-
-        private IOrderDetailsRepository _orderDetailsRepo;
         private IMembersRepository _memberRepo;
         private IOrdersRepository _orderRepo;
-        private ICartProdsService _cartProdService;
 
-        public OrderService(IMembersRepository memberRepo, IOrdersRepository orderRepo, IOrderDetailsRepository orderDetailsRepo, ICartProdsService cartProdService)
+        public OrderService(IMembersRepository memberRepo, IOrdersRepository orderRepo)
         {
             _memberRepo = memberRepo;
             _orderRepo = orderRepo;
-            _orderDetailsRepo = orderDetailsRepo;
-            _cartProdService = cartProdService;
         }
 
         public void CreateOrder(string email)

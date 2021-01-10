@@ -17,8 +17,9 @@ namespace ShoppingCart.Controllers
             _orderDetService = orderDetService;
             _cartProdsService = cartProdsService;
         }
-        public IActionResult Index(string email)
+        public IActionResult Index()
         {
+            string email = User.Identity.Name;
             var list = _cartProdsService.GetCartProds(email);
             return View(list);
         }
@@ -30,9 +31,10 @@ namespace ShoppingCart.Controllers
             return RedirectToAction("Index");
         }
 
-        public IActionResult Checkout(string email)
+        public IActionResult Checkout()
         {
-            _orderDetService.AddToOrder(email);
+            string email = User.Identity.Name;
+            _orderDetService.Checkout(email);
             TempData["feedback"] = "Added to Order";
             return RedirectToAction("Index", "Products");
         }

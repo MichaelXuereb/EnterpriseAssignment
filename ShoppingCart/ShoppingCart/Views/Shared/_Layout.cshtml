@@ -26,12 +26,18 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Products" asp-action="index" onclick="sessionStorage">View Product</a>
                         </li>
+                        @if (User.IsInRole("Admin")) {
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Products" asp-action="create">Add Product</a>
                         </li>
-                        <li class="nav-item">
+                        }
+                        
+                        @if (User.Identity.IsAuthenticated) {
+                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="ShoppingCart" asp-action="Index" asp-route-email="@User.Identity.Name">Cart</a>
-                        </li>
+                         </li>
+                        }
+                        
                     </ul>
                 </div>
             </div>

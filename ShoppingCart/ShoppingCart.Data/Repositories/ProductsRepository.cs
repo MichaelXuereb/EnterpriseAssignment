@@ -38,5 +38,11 @@ namespace ShoppingCart.Data.Repositories
             _context.Remove(GetProduct(id));
             _context.SaveChanges();
         }
+
+        public void UpdateProductToDB(Product p)
+        {
+            _context.Products.Update(p);
+            _context.SaveChanges();
+        }
     }
 }

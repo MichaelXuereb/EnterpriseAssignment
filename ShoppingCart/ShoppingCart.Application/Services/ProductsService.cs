@@ -1,4 +1,6 @@
-﻿using ShoppingCart.Application.Interfaces;
+﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using ShoppingCart.Application.Interfaces;
 using ShoppingCart.Application.ViewModels;
 using ShoppingCart.Domain.Interfaces;
 using ShoppingCart.Domain.Models;
@@ -12,20 +14,18 @@ namespace ShoppingCart.Application.Services
     public class ProductsService : IProductsService
     {
         private IProductsRepository _productRepo;
-        private ICartRepository _cartRepo;
-        private IMembersRepository _memberRepo;
-        private ICartProdRepository _orderDetRepo;
+        private IMapper _mapper;
 
-        public ProductsService(IProductsRepository productRepo, ICartRepository cartRepo, IMembersRepository memberRepo, ICartProdRepository orderDetRepo)
+        public ProductsService(IProductsRepository productRepo, IMapper mapper)
         {
             _productRepo = productRepo;
-            _cartRepo = cartRepo;
-            _memberRepo = memberRepo;
-            _orderDetRepo = orderDetRepo;
+            _mapper = mapper;
         }
 
         public IQueryable<ProductViewModel> GetProducts()
         {
+            return _productRepo.GetProducts().ProjectTo<ProductViewModel>(_mapper.ConfigurationProvider);
+            /*
             var list = from p in _productRepo.GetProducts()
                        select new ProductViewModel()
                        {
@@ -39,24 +39,22 @@ namespace ShoppingCart.Application.Services
                        };
 
             return list;
+            */
         }
 
         public void AddProduct(ProductViewModel data)
         {
-            Product p = new Product();
-            p.Description = data.Description;
-            p.ImageUrl = data.ImageUrl;
-            p.Name = data.Name;
-            p.Price = data.Price;
-            p.Quantity = data.Quantity;
-            p.CategoryId = data.Category.Id;
-
-
+            var p = _mapper.Map<Product>(data);
+            p.Category = null;
             _productRepo.AddProduct(p);
         }
 
         public ProductViewModel GetProduct(Guid id)
         {
+            Product product = _productRepo.GetProduct(id);
+            var resultingProductViewModel = _mapper.Map<ProductViewModel>(product);
+            return resultingProductViewModel;
+            /*
             ProductViewModel myViewModel = new ProductViewModel();
             var productFromDb = _productRepo.GetProduct(id);
 
@@ -71,6 +69,7 @@ namespace ShoppingCart.Application.Services
             myViewModel.Category.Name = productFromDb.Category.Name;
 
             return myViewModel;
+            */
         }
 
         public void DeleteProduct(Guid id)
@@ -79,6 +78,13 @@ namespace ShoppingCart.Application.Services
             {
                 _productRepo.DeleteProduct(id);
             }
+        }
+
+        public void UpdateProduct(Guid id)
+        {
+            Product p = _productRepo.GetProduct(id);
+            p.Quantity--;
+            _productRepo.UpdateProductToDB(p);
         }
     }
 }

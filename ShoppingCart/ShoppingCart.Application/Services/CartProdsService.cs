@@ -1,4 +1,6 @@
-﻿using ShoppingCart.Application.Interfaces;
+﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using ShoppingCart.Application.Interfaces;
 using ShoppingCart.Application.ViewModels;
 using ShoppingCart.Domain.Interfaces;
 using ShoppingCart.Domain.Models;
@@ -16,43 +18,61 @@ namespace ShoppingCart.Application.Services
         private ICartRepository _cartRepo;
         private IMembersRepository _memberRepo;
         private ICartProdRepository _cartProdRepo;
-        private ICartsService _cartService;
+        private IMapper _mapper;
 
-        public CartProdsService(IProductsRepository productRepo, ICartRepository cartRepo, ICartsService cartsService, IMembersRepository memberRepo, ICartProdRepository cartProdRepo)
+        public CartProdsService(IProductsRepository productRepo, ICartRepository cartRepo, IMembersRepository memberRepo, ICartProdRepository cartProdRepo, IMapper mapper)
         {
             _productRepo = productRepo;
             _cartRepo = cartRepo;
             _memberRepo = memberRepo;
             _cartProdRepo = cartProdRepo;
-            _cartService = cartsService;
+            _mapper = mapper;
         }
 
 
-        public void AddToCart(Guid id, string email)
+        public void AddToCart(Guid id, string email) {
+            CartProd scp = new CartProd();
+            scp.ShoppingCartFk = _cartRepo.GetCart(_memberRepo.GetMember(email).Email).Id;
+            scp.Quantity += 1;
+            scp.DateCreated = System.DateTime.Now;
+            scp.ProductFk = _productRepo.GetProduct(id).Id;
+            _cartProdRepo.AddToCart(scp);
+        }
+
+        public void UpdateToCart(Guid id, string email) {
+            CartProd scp = _cartProdRepo.GetCartProduct(id);
+            scp.ShoppingCartFk = _cartRepo.GetCart(_memberRepo.GetMember(email).Email).Id;
+            int currentQuantity = scp.Quantity;
+            currentQuantity++;
+            scp.Quantity = currentQuantity;
+            scp.DateCreated = System.DateTime.Now;
+            scp.ProductFk = _productRepo.GetProduct(id).Id;
+            _cartProdRepo.UpdateCart(scp);
+        }
+
+        public void CreateCart(string email) {
+            Cart c = new Cart();
+            c.DataPlaced = System.DateTime.Now;
+            c.Email = _memberRepo.GetMember(email).Email;
+            _cartRepo.CreateCart(c);
+        }
+
+        public void CartOptions(Guid id, string email)
         {
             if (_cartRepo.GetCart(_memberRepo.GetMember(email).Email) == null)
             {
-                _cartService.CreateCart(email);
+                CreateCart(email);
             }
 
-            if (_cartProdRepo.GetCartProduct(id) == null) {
-                CartProd scp = new CartProd();
-                scp.ShoppingCartFk = _cartRepo.GetCart(_memberRepo.GetMember(email).Email).Id;
-                scp.Quantity += 1;
-                scp.DateCreated = System.DateTime.Now;
-                scp.ProductFk = _productRepo.GetProduct(id).Id;
-                _cartProdRepo.AddToCart(scp);
-            }
-            else{
-                CartProd scp = _cartProdRepo.GetCartProduct(id);
-                scp.ShoppingCartFk = _cartRepo.GetCart(_memberRepo.GetMember(email).Email).Id;
-                int currentQuantity = scp.Quantity;
-                currentQuantity++;
-                scp.Quantity = currentQuantity;
-                scp.DateCreated = System.DateTime.Now;
-                scp.ProductFk = _productRepo.GetProduct(id).Id;
-                _cartProdRepo.UpdateCart(scp);
-                
+            if (_productRepo.GetProduct(id).Quantity != 0) {
+                if (_cartProdRepo.GetCartProduct(id) == null)
+                {
+                    AddToCart(id, email);
+                }
+                else
+                {
+                    UpdateToCart(id, email);
+                }
             }
         }
 
@@ -67,29 +87,7 @@ namespace ShoppingCart.Application.Services
         public IQueryable<CartProdViewModel> GetCartProds(string email)
         {
             var cartDb = _cartRepo.GetCart(email);
-
-            var list = from p in _cartProdRepo.GetCartProds()
-                       where p.ShoppingCartFk == cartDb.Id
-                       select new CartProdViewModel()
-                       {
-                           Id = p.id,
-                           Cart = new CartViewModel() { Id = p.ShoppingCartFk, DatePlaced = p.DateCreated, Email = cartDb.Email },
-                           Product = new ProductViewModel() { Id = p.ProductFk, Name = p.Product.Name, Price = p.Product.Price, Description = p.Product.Description, ImageUrl = p.Product.ImageUrl, Quantity = p.Quantity },
-                           DateCreated = p.DateCreated,
-                           Quantity = p.Quantity
-
-                       };
-            
-
-            return list;
-        }
-
-        public CartProdViewModel GetCartProduct(Guid id)
-        {         
-            CartProdViewModel cartProd = new CartProdViewModel();
-            var productFromDb = _cartProdRepo.GetCartProduct(id);
-            cartProd.Product.Quantity = productFromDb.Product.Quantity;
-            return cartProd;
+            return _cartProdRepo.GetCartProds().Where(e => e.ShoppingCartFk == cartDb.Id).ProjectTo<CartProdViewModel>(_mapper.ConfigurationProvider);
         }
     }
 }
