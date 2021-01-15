@@ -25,6 +25,8 @@ namespace ShoppingCart.Areas.Identity.Pages.Account
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
         private readonly IMembersService _memberService;
+        public string Message { get; set; }
+
 
         public RegisterModel(
             UserManager<IdentityUser> userManager,
@@ -96,10 +98,10 @@ namespace ShoppingCart.Areas.Identity.Pages.Account
                             FirstName = Input.FirstName,
                             LastName = Input.LastName
                         });
-                    _logger.LogInformation("User created a new account with password.");
 
+                    Message = "User created a new account with password.";
+                    _logger.LogInformation(Message);
 
-                    _logger.LogInformation("User created a new account with password.");
 
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));

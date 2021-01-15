@@ -3,54 +3,7 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Products</h1>
-<hr />
-
-<div class="container">
-    <div class="row">
-        @foreach (var product in Model)
-        {
-            <div class="col-4">
-                <div class="card mb-4 bg-dark text-white">
-                    <img class="cardimg" src="@product.ImageUrl" alt="Card image cap">
-                    <div class="card-body">
-                        <h5 class="cardtext">@product.Name</h5>
-                        <hr class="line" />
-                        <p class="cardtext">@product.Description</p>
-                        <hr class="line" />
-                        <h4 class="cardtext">€@product.Price</h4>
-                        <h4 class="cardtext">Currently in Stock: @product.Quantity</h4>
-                        <a href="#" class="btn btn-primary"><i class="fas fa-eye"></i> View Item</a>
-                        @if (product.Quantity != 0)
-                        {
-                            <a href="/Products/AddToCart?id=@product.Id&email=@User.Identity.Name" class="btn btn-success"><i class="fas fa-shopping-cart"></i> Add To Cart</a>
-                        }
-                        else
-                        {
-                            <a href="/Products/AddToCart?id=@product.Id&email=@User.Identity.Name" class="btn btn-success disabled"><i class="fas fa-shopping-cart"></i> Add To Cart</a>
-                        }
-                        @if (User.IsInRole("Admin"))
-                        {
-                            <a href="/Products/Delete?id=@product.Id" style="margin-left: 32%;" onclick="return window.confirm('Are you sure?')" class="btn btn-danger"><i class="fas fa-trash-alt"></i> Delete</a>
-                        }
-                    </div>
-                </div>
-            </div>
-        }
-    </div>
-    <hr />
-
-
-    @{
-        var prevDisabled = !Model.PreviousPage ? "disabled" : "";
-        var nextDisabled = !Model.NextPage ? "disabled" : "";
-    }
-
-    <a asp-action="Index" asp-route-pageNumber="@(Model.PageIndex - 1)" class="btn btn-default @prevDisabled">Previous</a>
-    <a asp-action="Index" asp-route-pageNumber="@(Model.PageIndex + 1)" class="btn btn-default @nextDisabled">Next</a>
-
-
-</div>
+@Html.Partial("PartialViewAllProd")
 
 <style>
     .card {
