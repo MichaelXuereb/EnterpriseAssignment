@@ -34,7 +34,7 @@ namespace ShoppingCart.Application.Services
             
             OrderDetails scp;
             CartProd cartProd;
-            Guid orderId = _orderRepo.GetOrder(_memberRepo.GetMember(email).Email).Id;
+            Guid orderId = _orderRepo.GetOrder(email).Id;
             var list = _cartProdSer.GetCartProds(email).ToList();
 
             foreach (var prod in list)
@@ -49,7 +49,7 @@ namespace ShoppingCart.Application.Services
 
                 cartProd = new CartProd();
                 cartProd.ProductFk = prod.Product.Id;
-                _cartProdSer.RemoveCartProduct(cartProd.ProductFk);
+                _cartProdSer.RemoveCartProduct(cartProd.ProductFk, email);
             }
 
         }

@@ -11,7 +11,7 @@ namespace ShoppingCart.Domain.Interfaces
         void AddToCart(CartProd prod);
         void UpdateCart(CartProd prod);
         IQueryable<CartProd> GetCartProds();
-        CartProd GetCartProduct(Guid id);
-        void RemoveCartProduct(Guid id);
+        CartProd GetCartProduct(Guid ProdId);
+        void RemoveCartProduct(Guid ProdId);
     }
 }

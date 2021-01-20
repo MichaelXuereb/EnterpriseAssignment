@@ -9,6 +9,5 @@ namespace ShoppingCart.Application.Interfaces
     public interface IOrderService
     {
         void CreateOrder(string email);
-        OrderViewModel GetOrder(string email);
     }
 }

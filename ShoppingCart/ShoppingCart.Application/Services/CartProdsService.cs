@@ -30,18 +30,18 @@ namespace ShoppingCart.Application.Services
         }
 
 
-        public void AddToCart(Guid id, string email) {
+        public void AddToCart(Guid prodID, string email) {
             CartProd scp = new CartProd();
-            scp.ShoppingCartFk = _cartRepo.GetCart(_memberRepo.GetMember(email).Email).Id;
+            scp.ShoppingCartFk = _cartRepo.GetCart(email).Id;
             scp.Quantity += 1;
             scp.DateCreated = System.DateTime.Now;
-            scp.ProductFk = _productRepo.GetProduct(id).Id;
+            scp.ProductFk = _productRepo.GetProduct(prodID).Id;
             _cartProdRepo.AddToCart(scp);
         }
 
         public void UpdateToCart(Guid id, string email) {
             CartProd scp = _cartProdRepo.GetCartProduct(id);
-            scp.ShoppingCartFk = _cartRepo.GetCart(_memberRepo.GetMember(email).Email).Id;
+            scp.ShoppingCartFk = _cartRepo.GetCart(email).Id;
             int currentQuantity = scp.Quantity;
             currentQuantity++;
             scp.Quantity = currentQuantity;
@@ -52,40 +52,40 @@ namespace ShoppingCart.Application.Services
 
         public void CreateCart(string email) {
             Cart c = new Cart();
-            c.DataPlaced = System.DateTime.Now;
             c.Email = _memberRepo.GetMember(email).Email;
             _cartRepo.CreateCart(c);
         }
 
-        public void CartOptions(Guid id, string email)
+        public void CartOptions(Guid ProdId, string email)
         {
-            if (_cartRepo.GetCart(_memberRepo.GetMember(email).Email) == null)
+            if (_cartRepo.GetCart(email) != null)
             {
+                if (_productRepo.GetProduct(ProdId).Quantity != 0)
+                {
+                    if (_cartProdRepo.GetCartProduct(ProdId) == null)
+                    {
+                        AddToCart(ProdId, email);
+                    }
+                    else
+                    {
+                        UpdateToCart(ProdId, email);
+                    }
+                }
+            }
+            else {
                 CreateCart(email);
-            }
-
-            if (_productRepo.GetProduct(id).Quantity != 0) {
-                if (_cartProdRepo.GetCartProduct(id) == null)
-                {
-                    AddToCart(id, email);
-                }
-                else
-                {
-                    UpdateToCart(id, email);
-                }
-            }
+            }            
         }
 
-        public void RemoveCartProduct(Guid id)
+        public void RemoveCartProduct(Guid ProdId, string email)
         {
-            if (_cartProdRepo.GetCartProduct(id) != null)
+            if (_cartProdRepo.GetCartProduct(ProdId) != null)
             {
-                _cartProdRepo.RemoveCartProduct(id);
+                _cartProdRepo.RemoveCartProduct(ProdId);
             }
         }
 
-        public IQueryable<CartProdViewModel> GetCartProds(string email)
-        {
+        public IQueryable<CartProdViewModel> GetCartProds(string email){
             var cartDb = _cartRepo.GetCart(email);
             return _cartProdRepo.GetCartProds().Where(e => e.ShoppingCartFk == cartDb.Id).ProjectTo<CartProdViewModel>(_mapper.ConfigurationProvider);
         }

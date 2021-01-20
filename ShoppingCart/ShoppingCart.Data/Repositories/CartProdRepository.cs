@@ -28,14 +28,14 @@ namespace ShoppingCart.Data.Repositories
             return _context.CartProd;
         }
 
-        public CartProd GetCartProduct(Guid id)
+        public CartProd GetCartProduct(Guid ProdId)
         {
-            return _context.CartProd.SingleOrDefault(x => x.Product.Id == id);
+            return _context.CartProd.SingleOrDefault(x => x.Product.Id == ProdId);
         }
 
-        public void RemoveCartProduct(Guid id)
+        public void RemoveCartProduct(Guid ProdId)
         {
-            _context.CartProd.Remove(GetCartProduct(id));
+            _context.CartProd.Remove(GetCartProduct(ProdId));
             _context.SaveChanges();
         }
 

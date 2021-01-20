@@ -22,24 +22,15 @@ namespace ShoppingCart.Application.Services
             _mapper = mapper;
         }
 
-        public IQueryable<ProductViewModel> GetProducts()
+        public IQueryable<ProductViewModel> GetProducts(string category)
         {
-            return _productRepo.GetProducts().ProjectTo<ProductViewModel>(_mapper.ConfigurationProvider);
-            /*
-            var list = from p in _productRepo.GetProducts()
-                       select new ProductViewModel()
-                       {
-                           Id = p.Id,
-                           Name = p.Name,
-                           Price = p.Price,
-                           Description = p.Description,
-                           ImageUrl = p.ImageUrl,
-                           Quantity = p.Quantity,
-                           Category = new CategoryViewModel() { Id = p.Category.Id, Name = p.Category.Name }
-                       };
-
-            return list;
-            */
+            if (category != null)
+            {
+                return _productRepo.GetProducts().Where(e => e.Category.Name == category).ProjectTo<ProductViewModel>(_mapper.ConfigurationProvider);
+            }
+            else {
+                return _productRepo.GetProducts().ProjectTo<ProductViewModel>(_mapper.ConfigurationProvider);
+            }
         }
 
         public void AddProduct(ProductViewModel data)
@@ -54,22 +45,6 @@ namespace ShoppingCart.Application.Services
             Product product = _productRepo.GetProduct(id);
             var resultingProductViewModel = _mapper.Map<ProductViewModel>(product);
             return resultingProductViewModel;
-            /*
-            ProductViewModel myViewModel = new ProductViewModel();
-            var productFromDb = _productRepo.GetProduct(id);
-
-            myViewModel.Description = productFromDb.Description;
-            myViewModel.Id = productFromDb.Id;
-            myViewModel.ImageUrl = productFromDb.ImageUrl;
-            myViewModel.Quantity = productFromDb.Quantity;
-            myViewModel.Name = productFromDb.Name;
-            myViewModel.Price = productFromDb.Price;
-            myViewModel.Category = new CategoryViewModel();
-            myViewModel.Category.Id = productFromDb.Category.Id;
-            myViewModel.Category.Name = productFromDb.Category.Name;
-
-            return myViewModel;
-            */
         }
 
         public void DeleteProduct(Guid id)

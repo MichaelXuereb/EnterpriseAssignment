@@ -13,7 +13,7 @@ namespace ShoppingCart.Application.Interfaces
 
         IQueryable<CartProdViewModel> GetCartProds(string email);
 
-        void RemoveCartProduct(Guid id);
+        void RemoveCartProduct(Guid ProdId, string email);
 
         void AddToCart(Guid id, string email);
 

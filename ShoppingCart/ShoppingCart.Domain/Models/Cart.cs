@@ -10,7 +10,6 @@ namespace ShoppingCart.Domain.Models
     {
         [Key]
         public Guid Id { get; set; }
-        public DateTime DataPlaced { get; set; }
 
         [ForeignKey("Member")]
         public string Email { get; set; }

@@ -20,18 +20,19 @@ namespace ShoppingCart.Controllers
             _cartProdsService = cartProdsService;
             _logger = logger.CreateLogger<ShoppingCartController>();
         }
-        public IActionResult Index()
+        public IActionResult Index(string email)
         {
-            string email = User.Identity.Name;
             var list = _cartProdsService.GetCartProds(email);
             return View(list);
         }
 
         public IActionResult Delete(Guid id)
         {
-            _cartProdsService.RemoveCartProduct(id);
-            TempData["feedback"] = "Product was deleted successfully";
-            return RedirectToAction("Index");
+            string email = User.Identity.Name;
+            _cartProdsService.RemoveCartProduct(id, email);
+            TempData["feedback"] = "Product from cart was deleted successfully";
+            _logger.LogInformation("Product from cart was deleted successfully");
+            return RedirectToAction("Index", new { Email =  email });
         }
 
         public IActionResult Checkout()
@@ -41,7 +42,7 @@ namespace ShoppingCart.Controllers
             TempData["feedback"] = "Added to Order";
             Message = "User: " + User.Identity.Name + " successfully made a purchase";
             _logger.LogInformation(Message);
-            return RedirectToAction("Index", "Products");
+            return RedirectToAction("Index", "Home");
         }
 
     }

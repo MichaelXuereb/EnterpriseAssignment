@@ -35,6 +35,12 @@ namespace Presentation.Controllers
             _logger = logger.CreateLogger<ProductsController>();
         }
 
+        public async Task<IActionResult> Index(string category, int pageNumber = 1){
+            var list = _productsService.GetProducts(category);
+
+            return View(await PageinatedList<ProductViewModel>.CreateAsync(list, pageNumber, 10));
+        }
+
         [HttpGet]
         [Authorize(Roles = "Admin")]
         public IActionResult Create()
@@ -69,7 +75,7 @@ namespace Presentation.Controllers
                             data.ImageUrl = @"\Images\" + fileName;
 
                             _productsService.AddProduct(data);
-                            ViewData["feedback"] = "Product was added successfully";
+                            TempData["feedback"] = "Product was added successfully";
                             Message = "User: " + User.Identity.Name + " successfully added a Product to the database";
                             _logger.LogInformation(Message);
                             ModelState.Clear();
@@ -78,20 +84,20 @@ namespace Presentation.Controllers
                     else {
                         Message = "Error while adding product to Database";
                         _logger.LogError(Message);
-                        ViewData["warning"] = Message;
+                        TempData["warning"] = Message;
                     }
                     
                 }
                 else {
                     Message = "Error while adding product to Database";
                     _logger.LogError(Message);
-                    ViewData["warning"] = Message;
+                    TempData["warning"] = Message;
                 }
                 
             }
             catch (Exception ex)
             {
-                ViewData["warning"] = "Product was not added. Check your details" + ex;
+                TempData["warning"] = "Product was not added. Check your details" + ex;
                 Message = "Error while adding product to Database";
                 _logger.LogWarning(Message);
             }
@@ -99,12 +105,6 @@ namespace Presentation.Controllers
             ViewBag.Categories = catList;
 
             return View();
-        }
-
-        public async Task<IActionResult> Index(int pageNumber = 1) {
-            var list = _productsService.GetProducts();
-
-            return View(await PageinatedList<ProductViewModel>.CreateAsync(list,pageNumber,7));
         }
 
         public IActionResult Details(Guid id)
@@ -115,21 +115,22 @@ namespace Presentation.Controllers
 
         }
 
-        public IActionResult Delete(Guid id)
+        public IActionResult Delete(Guid id, string cate)
         {
             _productsService.DeleteProduct(id);
-            TempData["feedback"] = "Product was deleted successfully"; //change wherever we are using ViewData to use TempData data
-            return RedirectToAction("Index");
+            TempData["feedback"] = "Product was deleted successfully";
+            _logger.LogInformation("Product was deleted successfully");
+            return RedirectToAction("Index", new { category = cate });
         }
 
-        public IActionResult AddToCart(Guid id)
+        public IActionResult AddToCart(Guid id, string cate)
         {
             string email = User.Identity.Name;
             _cartProdsService.CartOptions(id,email);
-            TempData["feedback"] = "Added to Cart";
             Message = "User: " + User.Identity.Name + " added a Product to the Cart";
             _logger.LogInformation(Message);
-            return RedirectToAction("Index");
+            TempData["feedback"] = "Added to Cart";
+            return RedirectToAction("Index", new { category = cate });
         }
 
     }

@@ -25,6 +25,7 @@ namespace ShoppingCart.Areas.Identity.Pages.Account
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
         private readonly IMembersService _memberService;
+        private readonly ICartProdsService _cartProdService;
         public string Message { get; set; }
 
 
@@ -33,13 +34,15 @@ namespace ShoppingCart.Areas.Identity.Pages.Account
             SignInManager<IdentityUser> signInManager,
             ILogger<RegisterModel> logger,
             IEmailSender emailSender,
-            IMembersService membersService)
+            IMembersService membersService,
+            ICartProdsService cartProdsService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
             _emailSender = emailSender;
             _memberService = membersService;
+            _cartProdService = cartProdsService;
         }
 
         [BindProperty]
@@ -98,6 +101,8 @@ namespace ShoppingCart.Areas.Identity.Pages.Account
                             FirstName = Input.FirstName,
                             LastName = Input.LastName
                         });
+
+                    _cartProdService.CreateCart(user.Email);
 
                     Message = "User created a new account with password.";
                     _logger.LogInformation(Message);

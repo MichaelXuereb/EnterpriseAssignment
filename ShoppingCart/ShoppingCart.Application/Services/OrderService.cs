@@ -27,16 +27,5 @@ namespace ShoppingCart.Application.Services
             o.Email = _memberRepo.GetMember(email).Email;
             _orderRepo.CreateOrder(o);
         }
-
-        public OrderViewModel GetOrder(string email)
-        {
-            OrderViewModel myViewModel = new OrderViewModel();
-            var cartFromDb = _orderRepo.GetOrder(email);
-
-            myViewModel.Email = cartFromDb.Email;
-            myViewModel.OrderDate = cartFromDb.OrderDate;
-
-            return myViewModel;
-        }
     }
 }

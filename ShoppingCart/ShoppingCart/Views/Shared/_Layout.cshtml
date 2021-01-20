@@ -24,20 +24,32 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Products" asp-action="index" onclick="sessionStorage">View Product</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Products" asp-action="index" asp-route-category="Computer" onclick="sessionStorage">Computers</a>
                         </li>
-                        @if (User.IsInRole("Admin")) {
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Products" asp-action="create">Add Product</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Products" asp-action="index" asp-route-category="Laptop" onclick="sessionStorage">Laptops</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Products" asp-action="index" asp-route-category="Consoles" onclick="sessionStorage">Consoles</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Products" asp-action="index" onclick="sessionStorage">All Products</a>
+                        </li>
+
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="ShoppingCart" asp-action="Index" asp-route-email="@User.Identity.Name">Cart</a>
+                            </li>
                         }
-                        
-                        @if (User.Identity.IsAuthenticated) {
-                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="ShoppingCart" asp-action="Index" asp-route-email="@User.Identity.Name">Cart</a>
-                         </li>
+
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Products" asp-action="create">Add Product</a>
+                            </li>
                         }
-                        
+
                     </ul>
                 </div>
             </div>
@@ -46,17 +58,17 @@
     <div class="container">
         <main role="main" class="pb-3">
 
-            @if (ViewData["feedback"] != null)
+            @if (TempData["feedback"] != null)
             {
                 <div class="alert alert-primary" role="alert">
-                    @ViewData["feedback"]
+                    @TempData["feedback"]
                 </div>
             }
-            else if (ViewData["warning"] != null)
+            else if (TempData["warning"] != null)
             {
 
                 <div class="alert alert-warning" role="alert">
-                    @ViewData["warning"]
+                    @TempData["warning"]
                 </div>
             }
 
@@ -71,6 +83,7 @@
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
     <script src="~/js/site.js" asp-append-version="true"></script>
     @RenderSection("Scripts", required: false)
 </body>
