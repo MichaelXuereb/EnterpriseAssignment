@@ -24,7 +24,7 @@ namespace ShoppingCart.Application.Services
         {
             Order o = new Order();
             o.OrderDate = System.DateTime.Now;
-            o.Email = _memberRepo.GetMember(email).Email;
+            o.Email = email;
             _orderRepo.CreateOrder(o);
         }
     }

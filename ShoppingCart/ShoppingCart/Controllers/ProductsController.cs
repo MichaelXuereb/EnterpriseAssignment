@@ -36,9 +36,15 @@ namespace Presentation.Controllers
         }
 
         public async Task<IActionResult> Index(string category, int pageNumber = 1){
-            var list = _productsService.GetProducts(category);
-
-            return View(await PageinatedList<ProductViewModel>.CreateAsync(list, pageNumber, 10));
+            try
+            {
+                var list = _productsService.GetProducts(category);
+                return View(await PageinatedList<ProductViewModel>.CreateAsync(list, pageNumber, 10));
+            }
+            catch (Exception ex)
+            {
+                return RedirectToAction("Error", "Home");
+            }
         }
 
         [HttpGet]
@@ -100,6 +106,8 @@ namespace Presentation.Controllers
                 TempData["warning"] = "Product was not added. Check your details" + ex;
                 Message = "Error while adding product to Database";
                 _logger.LogWarning(Message);
+                return RedirectToAction("Error", "Home");
+
             }
             var catList = _categoriesService.GetCategories();
             ViewBag.Categories = catList;
@@ -109,28 +117,47 @@ namespace Presentation.Controllers
 
         public IActionResult Details(Guid id)
         {
-            var myProduct = _productsService.GetProduct(id);
-
-            return View(myProduct);
-
+            try
+            {
+                var myProduct = _productsService.GetProduct(id);
+                return View(myProduct);
+            }
+            catch (Exception ex) {
+                return RedirectToAction("Error", "Home");
+            }
         }
 
+        [Authorize(Roles = "Admin")]
         public IActionResult Delete(Guid id, string cate)
         {
-            _productsService.DeleteProduct(id);
-            TempData["feedback"] = "Product was deleted successfully";
-            _logger.LogInformation("Product was deleted successfully");
-            return RedirectToAction("Index", new { category = cate });
+            try {
+                _productsService.DeleteProduct(id);
+                TempData["feedback"] = "Product was deleted successfully";
+                _logger.LogInformation("Product was deleted successfully");
+                return RedirectToAction("Index", new { category = cate });
+            }
+            catch (Exception ex)
+            {
+                return RedirectToAction("Error", "Home");
+            }
         }
 
+        [Authorize]
         public IActionResult AddToCart(Guid id, string cate)
         {
-            string email = User.Identity.Name;
-            _cartProdsService.CartOptions(id,email);
-            Message = "User: " + User.Identity.Name + " added a Product to the Cart";
-            _logger.LogInformation(Message);
-            TempData["feedback"] = "Added to Cart";
-            return RedirectToAction("Index", new { category = cate });
+            try
+            {
+                string email = User.Identity.Name;
+                _cartProdsService.CartOptions(id, email);
+                Message = "User: " + User.Identity.Name + " added a Product to the Cart";
+                _logger.LogInformation(Message);
+                TempData["feedback"] = "Added to Cart";
+                return RedirectToAction("Index", new { category = cate });
+            }
+            catch (Exception ex)
+            {
+                return RedirectToAction("Error", "Home");
+            }
         }
 
     }

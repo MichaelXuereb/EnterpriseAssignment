@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using ShoppingCart.Application.Interfaces;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Authorization;
+
 namespace ShoppingCart.Controllers
 {
     public class ShoppingCartController : Controller
@@ -20,29 +22,54 @@ namespace ShoppingCart.Controllers
             _cartProdsService = cartProdsService;
             _logger = logger.CreateLogger<ShoppingCartController>();
         }
+
+        [Authorize]
         public IActionResult Index(string email)
         {
-            var list = _cartProdsService.GetCartProds(email);
-            return View(list);
+            try
+            {
+                var list = _cartProdsService.GetCartProds(email);
+                return View(list);
+            }
+            catch (Exception ex)
+            {
+                return RedirectToAction("Error", "Home");
+            }
         }
 
+        [Authorize]
         public IActionResult Delete(Guid id)
         {
-            string email = User.Identity.Name;
-            _cartProdsService.RemoveCartProduct(id, email);
-            TempData["feedback"] = "Product from cart was deleted successfully";
-            _logger.LogInformation("Product from cart was deleted successfully");
-            return RedirectToAction("Index", new { Email =  email });
+            try
+            {
+                string email = User.Identity.Name;
+                _cartProdsService.RemoveCartProduct(id, email);
+                TempData["feedback"] = "Product from cart was deleted successfully";
+                _logger.LogInformation("Product from cart was deleted successfully");
+                return RedirectToAction("Index", new { Email = email });
+            }
+            catch (Exception ex)
+            {
+                return RedirectToAction("Error", "Home");
+            }
         }
 
+        [Authorize]
         public IActionResult Checkout()
         {
-            string email = User.Identity.Name;
-            _orderDetService.Checkout(email);
-            TempData["feedback"] = "Added to Order";
-            Message = "User: " + User.Identity.Name + " successfully made a purchase";
-            _logger.LogInformation(Message);
-            return RedirectToAction("Index", "Home");
+            try
+            {
+                string email = User.Identity.Name;
+                _orderDetService.Checkout(email);
+                TempData["feedback"] = "Added to Order";
+                Message = "User: " + User.Identity.Name + " successfully made a purchase";
+                _logger.LogInformation(Message);
+                return RedirectToAction("Index", "Home");
+            }
+            catch (Exception ex)
+            {
+                return RedirectToAction("Error", "Home");
+            }
         }
 
     }

@@ -32,20 +32,20 @@ namespace ShoppingCart.Application.Services
         {
             _orderSer.CreateOrder(email);
             
-            OrderDetails scp;
+            OrderDetails ord;
             CartProd cartProd;
             Guid orderId = _orderRepo.GetOrder(email).Id;
             var list = _cartProdSer.GetCartProds(email).ToList();
 
             foreach (var prod in list)
             {
-                scp = new OrderDetails();
-                scp.OrderFk = orderId;
-                scp.ProductFk = prod.Product.Id;
-                scp.Quantity = prod.Quantity;
-                _orderDetailsRepo.AddToOrderDetails(scp);
+                ord = new OrderDetails();
+                ord.OrderFk = orderId;
+                ord.ProductFk = prod.Product.Id;
+                ord.Quantity = prod.Quantity;
+                _orderDetailsRepo.AddToOrderDetails(ord);
 
-                _prodSer.UpdateProduct(scp.ProductFk);
+                _prodSer.UpdateProduct(ord.ProductFk, ord.Quantity);
 
                 cartProd = new CartProd();
                 cartProd.ProductFk = prod.Product.Id;

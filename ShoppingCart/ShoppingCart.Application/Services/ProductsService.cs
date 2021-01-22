@@ -55,10 +55,10 @@ namespace ShoppingCart.Application.Services
             }
         }
 
-        public void UpdateProduct(Guid id)
+        public void UpdateProduct(Guid id, int qty)
         {
             Product p = _productRepo.GetProduct(id);
-            p.Quantity--;
+            p.Quantity = p.Quantity - qty;
             _productRepo.UpdateProductToDB(p);
         }
     }
