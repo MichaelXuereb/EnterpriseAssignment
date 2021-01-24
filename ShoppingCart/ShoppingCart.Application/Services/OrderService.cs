@@ -20,10 +20,10 @@ namespace ShoppingCart.Application.Services
             _orderRepo = orderRepo;
         }
 
-        public void CreateOrder(string email)
+        public void CreateOrder(string email, DateTime created)
         {
             Order o = new Order();
-            o.OrderDate = System.DateTime.Now;
+            o.OrderDate = created;
             o.Email = email;
             _orderRepo.CreateOrder(o);
         }

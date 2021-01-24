@@ -1,6 +1,7 @@
 ﻿using ShoppingCart.Data.Context;
 using ShoppingCart.Domain.Interfaces;
 using ShoppingCart.Domain.Models;
+using System;
 using System.Linq;
 
 namespace ShoppingCart.Data.Repositories
@@ -20,9 +21,9 @@ namespace ShoppingCart.Data.Repositories
             _context.SaveChanges();
         }
 
-        public Order GetOrder(string email)
+        public Order GetOrder(string email, DateTime created)
         {
-            return _context.Order.OrderByDescending(x => x.Email == email).Last();
+            return _context.Order.SingleOrDefault(x => x.Email == email && x.OrderDate == created);
         }
     }
 }

@@ -8,6 +8,6 @@ namespace ShoppingCart.Application.Interfaces
 {
     public interface IOrderService
     {
-        void CreateOrder(string email);
+        void CreateOrder(string email, DateTime created);
     }
 }

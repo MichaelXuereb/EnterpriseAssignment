@@ -25,7 +25,7 @@
                         }
                         @if (User.IsInRole("Admin"))
                         {
-                            <a href="/Products/Delete?id=@product.Id&cate=@product.Category.Name" style="margin-left: 32%;" onclick="return window.confirm('Are you sure?')" class="btn btn-danger"><i class="fas fa-trash-alt"></i> Delete</a>
+                            <a href="/Products/Delete?id=@product.Id&cate=@product.Category.Name" style="margin-left: 32%;" onclick="return window.confirm('Are you sure?')" class="btn btn-danger"><i class="fas fa-trash-alt"></i>Delete</a>
                         }
                     </div>
                 </div>

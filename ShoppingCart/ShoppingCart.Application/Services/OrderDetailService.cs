@@ -30,11 +30,13 @@ namespace ShoppingCart.Application.Services
 
         public void Checkout(string email)
         {
-            _orderSer.CreateOrder(email);
+            DateTime created = System.DateTime.Now;
+
+            _orderSer.CreateOrder(email, created);
             
             OrderDetails ord;
             CartProd cartProd;
-            Guid orderId = _orderRepo.GetOrder(email).Id;
+            Guid orderId = _orderRepo.GetOrder(email, created).Id;
             var list = _cartProdSer.GetCartProds(email).ToList();
 
             foreach (var prod in list)

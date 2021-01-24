@@ -8,6 +8,6 @@ namespace ShoppingCart.Domain.Interfaces
     public interface IOrdersRepository
     {
         void CreateOrder(Order o);
-        Order GetOrder(string email);
+        Order GetOrder(string email, DateTime created);
     }
 }
